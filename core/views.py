@@ -1,6 +1,11 @@
 from rest_framework.viewsets import ModelViewSet
-from .models import  Product,Service
-from .serializer import ProductSerializer, ServiceSerializer
+from rest_framework import generics
+from .models import  Category, Blog, Product,Service, ProjectPost
+from .serializer import BlogSerializer, CategorySerializer, BlogSerializer, ProductSerializer, ServiceSerializer, ProjectPostSerializer, ContactSubmissionSerializer
+from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
 
 
 class ProductViewSet(ModelViewSet):
@@ -12,3 +17,44 @@ class ServiceViewSet(ModelViewSet):
     serializer_class = ServiceSerializer
     lookup_field = "slug"
 
+# class ProjectPostListAPIView(ListAPIView):
+#     queryset = ProjectPost.objects.prefetch_related("images")
+#     serializer_class = ProjectPostSerializer
+
+
+# class ProjectPostDetailAPIView(RetrieveAPIView):
+#     queryset = ProjectPost.objects.prefetch_related("images")
+#     serializer_class = ProjectPostSerializer
+#     lookup_field = "slug"
+
+class ProjectPostListAPIView(ListAPIView):
+    queryset = ProjectPost.objects.all()
+    serializer_class = ProjectPostSerializer
+
+class ProjectPostDetailAPIView(RetrieveAPIView):
+    queryset = ProjectPost.objects.all()
+    serializer_class = ProjectPostSerializer
+    lookup_field = 'slug'
+
+class CategoryListView(generics.ListAPIView):
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+
+# List all blogs
+class BlogListView(generics.ListAPIView):
+    queryset = Blog.objects.all().order_by('-date')
+    serializer_class = BlogSerializer
+
+# Retrieve single blog   by link
+class BlogDetailView(generics.RetrieveAPIView):
+    queryset = Blog.objects.all()
+    serializer_class = BlogSerializer
+    lookup_field = 'link'
+
+class ContactCreateView(APIView):
+    def post(self, request):
+        serializer = ContactSubmissionSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Message received!"}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
