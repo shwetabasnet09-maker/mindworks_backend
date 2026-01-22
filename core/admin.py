@@ -179,16 +179,16 @@ class ProjectPostAdmin(ModelAdmin):
     readonly_fields = ("banner_preview", "feature_preview")
 
     fields = (
-        "title",
-        "slug",
-        "content",
-        "banner_img",
-        "banner_preview",
-        "feature_img",
-        "feature_preview",
-        "is_active",
-        "image",
-    )
+    "title",
+    "slug",
+    "content",
+    "banner_img",
+    "banner_preview",
+    "feature_img",
+    "feature_preview",
+    "is_active",
+)
+
 
     def banner_preview(self, obj):
         if obj.banner_img:
