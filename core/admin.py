@@ -139,6 +139,48 @@ class ServiceAdmin(ModelAdmin):
     prepopulated_fields = {"slug": ("title",)}
     inlines = [ServiceTimelineInline]
 
+    readonly_fields = ("image_preview",)
+    fieldsets = (
+        (None, {
+            "fields": (
+                "title",
+                "slug",
+                "image",
+                "image_preview",
+                "is_active",
+            )
+        }),
+        ("Descriptions", {
+            "fields": (
+                "short_description",
+                "long_description",
+                "features",
+            )
+        }),
+    )
+
+    # -------- Image Preview (DETAIL PAGE)
+    def image_preview(self, obj):
+        if obj.image:
+            return format_html(
+                '<img src="{}" style="height:120px; border-radius:8px; object-fit:cover;" />',
+                obj.image.url
+            )
+        return "No image"
+
+    image_preview.short_description = "Image Preview"
+
+    # -------- Small Thumbnail (LIST PAGE)
+    def image_thumb(self, obj):
+        if obj.image:
+            return format_html(
+                '<img src="{}" style="height:40px;width:40px;border-radius:6px;object-fit:cover;" />',
+                obj.image.url
+            )
+        return "-"
+
+    image_thumb.short_description = "Image"
+
 
 # ---------------- ProjectPost Admin ----------------
 class ProjectPostImageInline(TabularInline):
