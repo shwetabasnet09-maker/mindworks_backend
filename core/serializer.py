@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Blog, Category, Blog, Product, ProjectPost, ProjectPostImage, ServiceTimeline
+from .models import Blog, Category, Blog, ContactInfo, Product, ProjectPost, ProjectPostImage, ServiceTimeline, TeamMember
 from .models import Service, ContactSubmission
 
 
@@ -73,3 +73,21 @@ class ContactSubmissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContactSubmission
         fields = '__all__'
+
+class TeamMemberSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+
+    class Meta:
+        model = TeamMember
+        fields = "__all__"
+
+    def get_image(self, obj):
+        if obj.image:
+            request = self.context.get("request")
+            return request.build_absolute_uri(obj.image.url)
+        return None
+    
+class ContactInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContactInfo
+        fields = "__all__"

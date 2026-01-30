@@ -23,11 +23,14 @@ from .views import (
     CategoryListView,
     BlogDetailView,
     BlogListView,
+    ContactInfoListAPIView,
     ProductViewSet,
     ServiceViewSet,
     ProjectPostListAPIView,
     ProjectPostDetailAPIView,
-    ContactCreateView
+    ContactCreateView,
+    TeamMemberDetailView,
+    TeamMemberListView
 )
 
 router = DefaultRouter()
@@ -44,4 +47,8 @@ urlpatterns = [
     path("blogs/", BlogListView.as_view(), name="post-list"),
     path("blogs/<str:link>/", BlogDetailView.as_view(), name="post-detail"),
     path("contact/", ContactCreateView.as_view(), name="contact-submit"),
+    path("team/", TeamMemberListView.as_view(), name="team-list"),
+    path("team/<int:id>/", TeamMemberDetailView.as_view(), name="team-detail"),
+    path("contact-info/", ContactInfoListAPIView.as_view(), name="contact-info"),
+    
 ]

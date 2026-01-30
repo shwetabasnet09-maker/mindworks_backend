@@ -1,110 +1,10 @@
-# from django.contrib import admin
-# from unfold.admin import ModelAdmin, TabularInline
-# from .models import Product, Service, ProjectPost, ProjectPostImage, ServiceTimeline
-# from ckeditor.widgets import CKEditorWidget
-# from django import forms
-# from django.utils.html import format_html
 
 
- 
-# class ServiceAdminForm(forms.ModelForm):
-#     description = forms.CharField(widget=CKEditorWidget())
-#     features = forms.CharField(widget=CKEditorWidget())
-
-#     class Meta:
-#         model = Service
-#         fields = "__all__"
-
-# # ---------------- Timeline Inline ----------------
-# class ServiceTimelineInline(admin.TabularInline):
-#     model = ServiceTimeline
-#     extra = 1
-#     verbose_name = "Timeline Step"
-#     verbose_name_plural = "Timeline Steps"
-
-# @admin.register(Service)
-# class ServiceAdmin(ModelAdmin):
-#     form = ServiceAdminForm
-#     list_display = ("id", "title", "slug", "is_active")
-#     list_display_links = ("title",)
-#     list_filter = ("is_active",)
-#     search_fields = ("title", "slug")
-#     prepopulated_fields = {"slug": ("title",)}
-#     inlines = [ServiceTimelineInline] 
-    
-# class ProjectPostImageInline(admin.TabularInline):
-#     model = ProjectPostImage
-#     extra = 1
-
-#     fields = ("image", "image_preview", "alt_text")
-#     readonly_fields = ("image_preview",)
-
-#     def image_preview(self, obj):
-#         if obj.image:
-#             return format_html(
-#                 '<img src="{}" style="height: 100px; object-fit: cover; border-radius: 6px;" />',
-#                 obj.image.url
-#             )
-#         return "-"
-
-#     image_preview.short_description = "Preview"
-
-
-# class ProjectPostAdminForm(ModelAdmin):
-#      content = forms.CharField(widget=CKEditorWidget())
-
-# class Meta:
-#         model = ProjectPost
-#         fields = "__all__"
-
-
-# @admin.register(ProjectPost)
-# class ProjectPostAdmin(ModelAdmin):
-#     form = ProjectPostAdminForm
-
-#     list_display = ("title", "is_active", "created_at")
-#     list_filter = ("is_active",)
-#     search_fields = ("title",)
-#     prepopulated_fields = {"slug": ("title",)}
-
-#     inlines = [ProjectPostImageInline]
-
-#     readonly_fields = ("banner_preview", "feature_preview")
-
-#     fields = (
-#         "title",
-#         "slug",
-#         "content",
-#         "banner_img",
-#         "banner_preview",
-#         "feature_img",
-#         "feature_preview",
-#         "is_active",
-#     )
-
-#     def banner_preview(self, obj):
-#         if obj.banner_img:
-#             return format_html(
-#                 '<img src="{}" style="height: 150px; object-fit: cover; border-radius: 8px;" />',
-#                 obj.banner_img.url
-#             )
-#         return "-"
-
-#     def feature_preview(self, obj):
-#         if obj.feature_img:
-#             return format_html(
-#                 '<img src="{}" style="height: 120px; object-fit: cover; border-radius: 8px;" />',
-#                 obj.feature_img.url
-#             )
-#         return "-"
-
-#     banner_preview.short_description = "Banner Preview"
-#     feature_preview.short_description = "Feature Preview"
 
 
 from django.contrib import admin
 from unfold.admin import ModelAdmin, TabularInline
-from .models import Blog, Product, Service, ProjectPost, ProjectPostImage, ServiceTimeline, Blog, Category, ContactSubmission
+from .models import Blog, ContactInfo, Product, Service, ProjectPost, ProjectPostImage, ServiceTimeline, Blog, Category, ContactSubmission,  TeamMember
 from ckeditor.widgets import CKEditorWidget
 from django import forms
 from django.utils.html import format_html
@@ -328,5 +228,86 @@ class ContactSubmissionAdmin(ModelAdmin):
         ('System Metadata', {
             'fields': ('created_at',),
             'classes': ('collapse',),
+        }),
+    )
+
+@admin.register(TeamMember)
+class TeamMemberAdmin(ModelAdmin):
+    list_display = (
+        "image_thumb",
+        "name",
+        "role",
+        "is_active",
+        "created_at"
+    )
+    list_display_links = ("name",)
+    list_filter = ("is_active", "created_at")
+    search_fields = ("name", "role")
+    ordering = ("-created_at",)
+
+    readonly_fields = ("image_preview",)
+
+    fieldsets = (
+        (None, {
+            "fields": (
+                "name",
+                "role",
+                "image",
+                "image_preview",
+                "is_active",
+            )
+        }),
+        ("Social Links", {
+            "fields": (
+                "facebook_url",
+                "twitter_url",
+                "linkedin_url",
+            ),
+            "classes": ("collapse",),
+        }),
+    )
+
+    # -------- Large Preview (Detail Page)
+    def image_preview(self, obj):
+        if obj.image:
+            return format_html(
+                '<img src="{}" style="height:120px; border-radius:10px; object-fit:cover;" />',
+                obj.image.url
+            )
+        return "No image"
+
+    image_preview.short_description = "Image Preview"
+
+    # -------- Small Thumbnail (List Page)
+    def image_thumb(self, obj):
+        if obj.image:
+            return format_html(
+                '<img src="{}" style="height:40px;width:40px;border-radius:6px;object-fit:cover;" />',
+                obj.image.url
+            )
+        return "-"
+
+    image_thumb.short_description = "Image"
+
+@admin.register(ContactInfo)
+class ContactInfoAdmin(ModelAdmin):
+    list_display = (
+        "title",
+        "icon",
+        "content",
+        "link",
+        "is_active",
+    )
+    list_filter = ("icon", "is_active")
+    search_fields = ("title", "content")
+    list_editable = ("is_active",)
+    ordering = ("id",)
+
+    fieldsets = (
+        ("Contact Details", {
+            "fields": ("icon", "title", "content", "link")
+        }),
+        ("Status", {
+            "fields": ("is_active",)
         }),
     )

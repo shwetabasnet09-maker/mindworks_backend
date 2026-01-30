@@ -168,3 +168,41 @@ class ContactSubmission(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.subject}"
+    
+class TeamMember(models.Model):
+    name = models.CharField(max_length=100)
+    role = models.CharField(max_length=100)
+    image = models.ImageField(upload_to="team/", blank=True, null=True)
+
+    facebook_url = models.URLField(blank=True, null=True)
+    twitter_url = models.URLField(blank=True, null=True)
+    linkedin_url = models.URLField(blank=True, null=True)
+
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
+class ContactInfo(models.Model):
+    ICON_CHOICES = [
+        ("map", "MapPin"),
+        ("mail", "Mail"),
+        ("phone", "Phone"),
+    ]
+
+    icon = models.CharField(
+        max_length=20,
+        choices=ICON_CHOICES
+    )
+    title = models.CharField(max_length=100)
+    content = models.CharField(max_length=255)
+    link = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True
+    )
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.title
